@@ -258,8 +258,9 @@ locktest(int nargs, char **args)
 
 	kprintf_n("Starting lt1...\n");
 	for (i=0; i<CREATELOOPS; i++) {
-		kprintf_t(".");
+		kprintf_t("creating lock.");
 		testlock = lock_create("testlock");
+		kprintf_t("lock was created\n");
 		if (testlock == NULL) {
 			panic("lt1: lock_create failed\n");
 		}
@@ -680,6 +681,7 @@ cvtest2(int nargs, char **args)
 		testlocks[i] = lock_create("cvtest2 lock");
 		testcvs[i] = cv_create("cvtest2 cv");
 	}
+	kprintf_n("created locks");
 	spinlock_init(&status_lock);
 	test_status = TEST161_SUCCESS;
 

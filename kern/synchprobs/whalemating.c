@@ -44,7 +44,21 @@
  * Called by the driver during initialization.
  */
 
+struct cv* male_cv = NULL;
+struct cv* female_cv = NULL;
+struct cv* matchmaker_cv = NULL;
+struct lock* testlock1 = NULL;
+struct lock* testlock2 = NULL;
+struct lock* testlock3 = NULL;
+
 void whalemating_init() {
+	male_cv = cv_create("male_cv");
+	female_cv = cv_create("female_cv");
+	matchmaker_cv = cv_create("matchmaker_cv");
+	testlock1 = lock_create("testlock1");
+	testlock2 = lock_create("testlock2");
+	testlock3 = lock_create("testlock3");
+
 	return;
 }
 
@@ -54,6 +68,13 @@ void whalemating_init() {
 
 void
 whalemating_cleanup() {
+	cv_destroy(male_cv);
+	cv_destroy(female_cv);
+	cv_destroy(matchmaker_cv);
+	lock_destroy(testlock1);
+	lock_destroy(testlock2);
+	lock_destroy(testlock3);
+	
 	return;
 }
 
@@ -65,6 +86,14 @@ male(uint32_t index)
 	 * Implement this function by calling male_start and male_end when
 	 * appropriate.
 	 */
+
+	male_start(index);
+	
+	lock_acquire(testlock1);
+	cv_wait(male_cv , testlock1);
+				
+	male_end(index);
+	lock_release(testlock1);
 	return;
 }
 
@@ -76,6 +105,16 @@ female(uint32_t index)
 	 * Implement this function by calling female_start and female_end when
 	 * appropriate.
 	 */
+
+	female_start(index);
+	lock_acquire(testlock2);
+	
+	cv_wait(female_cv , testlock2);
+	
+	
+	female_end(index);
+	lock_release(testlock2);
+	
 	return;
 }
 
@@ -87,5 +126,14 @@ matchmaker(uint32_t index)
 	 * Implement this function by calling matchmaker_start and matchmaker_end
 	 * when appropriate.
 	 */
+	
+	matchmaker_start(index);
+	lock_acquire(testlock1);
+	cv_signal(male_cv , testlock1);
+	lock_release(testlock1);
+	lock_acquire(testlock2);
+	cv_signal(female_cv, testlock2);
+	lock_release(testlock2);		
+	matchmaker_end(index);
 	return;
 }

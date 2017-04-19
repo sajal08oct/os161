@@ -60,9 +60,10 @@ loudthread(void *junk, unsigned long num)
 	int i;
 
 	(void)junk;
-
+	random_yielder(4);
 	for (i=0; i<120; i++) {
 		putch(ch);
+		putch('\n');
 	}
 	V(tsem);
 }

@@ -96,7 +96,7 @@ boot(void)
 	 * anything at all. You can make it larger though (it's in
 	 * dev/generic/console.c).
 	 */
-
+	kprintf("here1,,,,,,,,,,,,,,,,\n");
 	kprintf("\n");
 	kprintf("OS/161 base system version %s\n", BASE_VERSION);
 	kprintf("%s", harvard_copyright);
@@ -108,12 +108,16 @@ boot(void)
 
 	/* Early initialization. */
 	ram_bootstrap();
+	kprintf("here1");
 	proc_bootstrap();
+	kprintf("here2");
 	thread_bootstrap();
+	kprintf("here3");
 	hardclock_bootstrap();
+	kprintf("here4");
 	vfs_bootstrap();
+	kprintf("here5");
 	kheap_nextgeneration();
-
 	/* Probe and initialize devices. Interrupts should come on. */
 	kprintf("Device probe...\n");
 	KASSERT(curthread->t_curspl > 0);
